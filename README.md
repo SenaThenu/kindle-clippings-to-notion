@@ -4,7 +4,7 @@
 <br>
 <div align="center">
   <a href="https://github.com/SenaThenu/kindle-clippings-to-notion">
-    <img src="readme-assets/logo.png" alt="Logo" height="80">
+    <img src="https://github.com/SenaThenu/kindle-clippings-to-notion/blob/main/readme-assets/Logo.png" alt="Logo" height="80">
   </a>
 
 <h3 align="center">🚀 Kindle Clippings to Notion 🚀</h3>
@@ -57,13 +57,16 @@ The Kindle Clippings Extractor is a Python script that allows you to extract hig
 
 ### Prerequisites 📋
 
-Make sure you have python installed. Afterwards, run the following command in the terminal and install the requirements;
+Make sure you have Python installed. Afterwards, run the following command in the terminal and install the requirements;
 ```bash
 pip install -r requirements.txt
 ```
+
+<p align="right"><a href="#readme-top">Jump to Top🔝</a></p>
+
 ## Getting Started 🚦
 
-Plug in your kindle and copy "My Clippings.txt" file to the directory where `main.py` lies.
+Plug in your Kindle and copy the "My Clippings.txt" file to the directory where `main.py` lies.
 
 You should have a Notion Database to store all your book notes. If you have one, you're good to go. Otherwise, you can duplicate this fancy template: [Book Notes Template](https://senathenu.notion.site/8f98ce4fb0154407a98d48a8ea424fa6?v=25f74593774b463bba10de7a2d6968e8&pvs=4)
 
@@ -71,11 +74,11 @@ Then, go to [Notion Integrations](https://www.notion.so/my-integrations) and cre
 
 Copy the `Internal Integration Secret` of your integration. This is referred to as the `API_ID` throughout the program. (If you feel stuck, go and watch the following video!)
 
-![Notion Integrations Screen Recording](readme-assets/Notion-Integrations-Screen-Recording.mp4)
+https://github.com/SenaThenu/kindle-clippings-to-notion/assets/98274844/2e8b0920-899e-4531-a24a-c77b5ec72384
 
 As shown in the following picture, you can find the `Database_ID`!
 
-!(Finding the Database ID)[readme-assets\database-id.png]
+![Finding the Database ID](https://github.com/SenaThenu/kindle-clippings-to-notion/blob/main/readme-assets/database-id.png)
 
 Enjoy! :)
 
@@ -91,7 +94,7 @@ Welcome Code Wizards! 🧙‍♂️✨ Your contributions fuel ⛽ this repo!!!
 
 <details>
     <summary>Why are open-source developers the sweetest folks in tech? 🍭</summary>
-    <p> Because they believe in sharing not only code but also <i>smiles 😄</i> and <i>love ❤️</i> through 0s and 1s!</p>
+      <li> Because they believe in sharing not only code but also <i>smiles 😄</i> and <i>love ❤️</i> through 0s and 1s! </li>
 </details>
 
 <br>
