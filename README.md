@@ -7,19 +7,11 @@
     <img src="readme-assets/logo.png" alt="Logo" height="80">
   </a>
 
-<h3 align="center">🚀 project_title 🚀</h3>
+<h3 align="center">🚀 Kindle Clippings to Notion 🚀</h3>
 
   <p align="center">
-    ✨ project_description ✨
+    ✨ From E-books to Knowledge Nuggets ✨
     <br>
-    <a href="https://github.com/SenaThenu/kindle-clippings-to-notion"><strong>Explore the docs 📚 »</strong></a>
-    <br>
-    <br>
-    <a href="https://github.com/SenaThenu/kindle-clippings-to-notion">View Demo ▶️</a>
-    ·
-    <a href="https://github.com/SenaThenu/kindle-clippings-to-notion/issues">Report Bug 🐞</a>
-    ·
-    <a href="https://github.com/SenaThenu/kindle-clippings-to-notion/issues">Request Feature 🙌</a>
   </p>
 </div>
 
@@ -39,11 +31,8 @@
 - [Table of Contents 📜](#table-of-contents-)
 - [About The Project 📖](#about-the-project-)
   - [Built With 🔧](#built-with-)
-- [Getting Started 🚦](#getting-started-)
   - [Prerequisites 📋](#prerequisites-)
-  - [Installation 🛠️](#installation-️)
-- [Usage 🚀](#usage-)
-- [Roadmap 🗺️](#roadmap-️)
+- [Getting Started 🚦](#getting-started-)
 - [Contributing 👋](#contributing-)
 - [Current Contributors 🧙‍♂️](#current-contributors-️)
 - [Contact 📧](#contact-)
@@ -51,7 +40,7 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project 📖
-
+The Kindle Clippings Extractor is a Python script that allows you to extract highlights and notes from your Kindle device's "My Clippings.txt" file and organize them into a Notion database. This project aims to make it easier for Kindle users to manage and access their book clippings in a more organized way.
 
 
 <p align="right"><a href="#readme-top">Jump to Top🔝</a></p>
@@ -59,45 +48,38 @@
 
 ### Built With 🔧
 <a href="https://www.python.org/"> <img src="https://img.shields.io/badge/Python-3570a0?style=for-the-badge&logo=python&logoColor=ffffff" alt="Python">
+<a href="https://www.notion.so/"> <img src="https://img.shields.io/badge/Notion API-b8c7d6?style=for-the-badge&logo=notion&logoColor=000" alt="Notion API">
 <p align="right"><a href="#readme-top">Jump to Top🔝</a></p>
 
 
 
 <!-- GETTING STARTED -->
-## Getting Started 🚦
-
 
 ### Prerequisites 📋
 
+Make sure you have python installed. Afterwards, run the following command in the terminal and install the requirements;
+```bash
+pip install -r requirements.txt
+```
+## Getting Started 🚦
 
+Plug in your kindle and copy "My Clippings.txt" file to the directory where `main.py` lies.
 
-### Installation 🛠️
+You should have a Notion Database to store all your book notes. If you have one, you're good to go. Otherwise, you can duplicate this fancy template: [Book Notes Template](https://senathenu.notion.site/8f98ce4fb0154407a98d48a8ea424fa6?v=25f74593774b463bba10de7a2d6968e8&pvs=4)
 
+Then, go to [Notion Integrations](https://www.notion.so/my-integrations) and create a new integration.
 
-<p align="right"><a href="#readme-top">Jump to Top🔝</a></p>
+Copy the `Internal Integration Secret` of your integration. This is referred to as the `API_ID` throughout the program. (If you feel stuck, go and watch the following video!)
 
+![Notion Integrations Screen Recording](readme-assets/Notion-Integrations-Screen-Recording.mp4)
 
+As shown in the following picture, you can find the `Database_ID`!
 
-<!-- USAGE EXAMPLES -->
-## Usage 🚀
+!(Finding the Database ID)[readme-assets\database-id.png]
 
-
-<p align="right"><a href="#readme-top">Jump to Top🔝</a></p>
-
-
-
-<!-- ROADMAP -->
-## Roadmap 🗺️
-
-- [ ] Feature 1 ✨
-- [ ] Feature 2 ✨
-- [ ] Feature 3 ✨
-    - [ ] Nested Feature ✨
-
-See the [open issues](https://github.com/SenaThenu/kindle-clippings-to-notion/issues) for a full list of proposed features (and known issues).
+Enjoy! :)
 
 <p align="right"><a href="#readme-top">Jump to Top🔝</a></p>
-
 
 
 <!-- CONTRIBUTING -->
@@ -165,7 +147,6 @@ Senash Thenuja - senathenu@gmail.com 📬
 ## Acknowledgments \w 💖
 
 * [Documentation Template](https://github.com/othneildrew/Best-README-Template)
-* []()
-* []()
+* [Circular Arrows Logo - justicon (Flaticon)](https://www.flaticon.com/free-icon/circle_3513718?term=circle+arrows&page=1&position=36&origin=search&related_id=3513718)
 
 <p align="right"><a href="#readme-top">Jump to Top🔝</a></p>
