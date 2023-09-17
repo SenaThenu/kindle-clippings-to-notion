@@ -80,6 +80,8 @@ As shown in the following picture, you can find the `Database_ID`!
 
 ![Finding the Database ID](https://github.com/SenaThenu/kindle-clippings-to-notion/blob/main/readme-assets/database-id.png)
 
+Once you have got these 2 keys, run the `main.py` program. 
+
 Enjoy! :)
 
 <p align="right"><a href="#readme-top">Jump to Top🔝</a></p>
@@ -138,7 +140,6 @@ Welcome Code Wizards! 🧙‍♂️✨ Your contributions fuel ⛽ this repo!!!
 
 <!-- CONTACT -->
 
-<!-- TODO: Replace .all-contributorsrc -->
 ## Contact 📧
 
 Senash Thenuja - senathenu@gmail.com 📬 
