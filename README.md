@@ -57,7 +57,7 @@ The Kindle Clippings Extractor is a Python script that allows you to extract hig
 
 ### Prerequisites 📋
 
-Make sure you have Python installed. Afterwards, run the following command in the terminal and install the requirements;
+Make sure you have Python installed. Afterwards, run the following command in the terminal to install the requirements;
 ```bash
 pip install -r requirements.txt
 ```
