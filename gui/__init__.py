@@ -9,6 +9,7 @@ from PyQt6 import QtWidgets, QtGui
 from ._main_ui import Ui_mainWindow
 from ._credentials_ui import Ui_Credentials
 
+# importing and initialising the ui classes
 MAIN_GUI = Ui_mainWindow()
 CREDENTIALS_GUI = Ui_Credentials()
 
@@ -16,7 +17,11 @@ LOGO_PATH = path.abspath(
     path.join(path.dirname(path.dirname(__file__)), "readme_assets/app_logo.png")
 )
 
-# Class instances that provides access to program functions
+# some default styling
+ERROR_STYLE = "color: red;\nfont-weight: bold;"
+SUCCESS_STYLE = "color: green;\nfont-weight: bold;"
+
+# class instances that provides access to program functions
 CREDENTIALS_MANAGER = None
 
 
@@ -31,10 +36,41 @@ def create_gui(credential_manager: object):
 
     # sets up UI elements
     _setup_menubar()
+    _enable_browse_path()
+
+    # hiding some stuff until sync is pressed
+    MAIN_GUI.syncProgressBar.setHidden(True)
+    MAIN_GUI.syncStatusMessage.setHidden(True)
 
     # basic main window configurations
     main_window.setWindowIcon(QtGui.QIcon(LOGO_PATH))
+
     return main_window
+
+
+def _enable_browse_path():
+    """
+    Allows the user ot select the path they need
+    """
+
+    def _browse_path():
+        # options = QtWidgets.QFileDialog.DontUseNativeDialog
+        path = QtWidgets.QFileDialog.getOpenFileName(
+            MAIN_GUI.centralwidget,
+            "Open Your Kindle Clippings Text File",
+            filter="*.txt",
+        )
+
+        if path:
+            MAIN_GUI.pathInput.setText(path[0])
+
+    MAIN_GUI.browsePath.clicked.connect(_browse_path)
+
+
+def _execute_syncing():
+    MAIN_GUI.syncBtn.setEnabled(False)
+    # execute the function thingy
+    pass
 
 
 def _setup_menubar():
@@ -67,6 +103,7 @@ def _set_up_credentials_editor_functions():
         )
 
         # showing the success message
+        CREDENTIALS_GUI.savedMessageLabel.setStyleSheet(SUCCESS_STYLE)
         CREDENTIALS_GUI.savedMessageLabel.setHidden(False)
 
     CREDENTIALS_GUI.saveBtn.clicked.connect(_save_credentials)
