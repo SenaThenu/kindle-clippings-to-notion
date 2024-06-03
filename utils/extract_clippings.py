@@ -87,15 +87,18 @@ def _extract_clippings_from_raw(raw_clippings_lines: list) -> dict:
     return books
 
 
-def extractor() -> dict:
+def extractor(path_to_clippings_txt: str) -> dict:
     """
     Extracts the highlights from My Clippings.txt and arranges each clipping under book name
+
+    Args:
+        path_to_clippings_txt (str): path to My Clippings.txt
 
     Returns:
         dict: a dict with the key being the book name and the values being a list of clippings (where each clipping is a dictionary!)
     """
     # Retrieving from my clippings
-    with open("My Clippings.txt", "r", encoding="utf8") as f:
+    with open(path_to_clippings_txt, "r", encoding="utf8") as f:
         raw_clippings_lines = f.readlines()
 
     books = _extract_clippings_from_raw(raw_clippings_lines)
