@@ -4,7 +4,7 @@
 <br>
 <div align="center">
   <a href="https://github.com/SenaThenu/kindle-clippings-to-notion">
-    <img src="https://github.com/SenaThenu/kindle-clippings-to-notion/blob/main/readme-assets/Logo.png" alt="Logo" height="80">
+    <img src="https://github.com/SenaThenu/kindle-clippings-to-notion/blob/main/readme_assets/logo.png" alt="Logo" height="150">
   </a>
 
 <h3 align="center">🚀 Kindle Clippings to Notion 🚀</h3>
