@@ -33,7 +33,9 @@ def _extract_clippings_from_raw(raw_clippings_lines: list) -> dict:
                 if "(" in raw_line and ")" in raw_line:
                     _index_of_left_bracket = raw_line.index("(")
                     # the string is reversed for the following
-                    _index_of_right_bracket = raw_line[::-1].index(")")
+                    _index_of_right_bracket = (
+                        len(raw_line) - 1 - raw_line[::-1].index(")")
+                    )
 
                     _book_title = raw_line[:_index_of_left_bracket].strip()
                     _author = raw_line[
@@ -76,11 +78,22 @@ def _extract_clippings_from_raw(raw_clippings_lines: list) -> dict:
                     f"{str(e)} " for e in _split_raw_line[_datetime_starting_index:]
                 ).strip()
 
+                # adding empty strings for highlights and notes (as placeholders)
+                # this even allows us to allow multi-line highlights to be synced
+                _current_clipping_data["highlight"] = ""
+                _current_clipping_data["note"] = ""
+
                 # emptying the into_typ_in_next_line so that it reaches the else block!
                 _info_type_in_next_line = ""
             else:
                 # mostly highlights and notes reach this else block!
-                books[_current_book][-1][_clipping_type] = raw_line.strip()
+                _clipping = books[_current_book][-1][_clipping_type]
+                if _clipping == "":
+                    books[_current_book][-1][_clipping_type] += raw_line.strip()
+                else:
+                    # adding a line break
+                    books[_current_book][-1][_clipping_type] += f"\n{raw_line.strip()}"
+
         else:
             continue
 
@@ -104,3 +117,7 @@ def extractor(path_to_clippings_txt: str) -> dict:
     books = _extract_clippings_from_raw(raw_clippings_lines)
 
     return books
+
+
+# with open("Sample.json", "w") as f:
+#     json.dump(extractor("Clippings Test.txt"), f)

@@ -166,5 +166,7 @@ test.py
 *.ai
 
 # secret files
-credentials.yaml
+config.yaml
 My Clippings.txt
+Clippings Test.txt
+My Clippings.json

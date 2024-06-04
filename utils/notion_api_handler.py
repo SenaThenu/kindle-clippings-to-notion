@@ -42,10 +42,13 @@ class NotionApiHandler:
         # extracting the book name and its page id
         page_info = {}
         for info in existing_page_info_list:
-            # this is the index: ["properties"]["Name"]["title"][0]["plain_text"]
             book_name = info["properties"]["Name"]["title"][0]["plain_text"]
             book_id = info["id"]
             book_highlights = info["properties"]["Highlights"]["number"]
+            if not book_highlights:
+                # if it returns none
+                book_highlights = 0
+
             page_info[book_name] = {"id": book_id, "n_highlights": book_highlights}
 
         return page_info
@@ -126,7 +129,7 @@ class NotionApiHandler:
 
         # additional stuff based on the block type
         annotation = {"italic": True} if is_date else {}
-        content = f"Your Note: " if is_note else content
+        content = f"Your Note: {content}" if is_note else content
 
         raw_data = {
             "children": [
@@ -168,15 +171,10 @@ class NotionApiHandler:
                 # highlight
                 self._add_a_block_to_page(clipping["highlight"], book_id)
 
-                try:
-                    if clipping["note"]:
-                        # if a note exists
-                        print(clipping["note"])
-                        self._add_a_block_to_page(
-                            clipping["note"], book_id, is_note=True
-                        )
-                except:
-                    pass
+                if clipping["note"] != "":
+                    # if a note exists
+                    print(clipping["note"])
+                    self._add_a_block_to_page(clipping["note"], book_id, is_note=True)
 
                 # location and the added date
                 _page_num = clipping["page"]
@@ -194,7 +192,9 @@ class NotionApiHandler:
             # updating the Highlights property of the page to represent the number of highlights in the page
             _to_update_props = {
                 "properties": {
-                    "Highlights": {"number": n_current_highlights + len(clippings_list)}
+                    "Highlights": {
+                        "number": int(n_current_highlights) + len(clippings_list)
+                    }
                 }
             }
             _to_update_props = json.dumps(_to_update_props)

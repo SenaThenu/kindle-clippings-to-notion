@@ -3,7 +3,6 @@ Connects the GUI and the Utils
 """
 
 from os import path
-from functools import partial
 
 from PyQt6 import QtWidgets, QtGui
 from ._main_ui import Ui_mainWindow
@@ -22,13 +21,25 @@ ERROR_STYLE = "color: red;\nfont-weight: bold;"
 SUCCESS_STYLE = "color: green;\nfont-weight: bold;"
 
 # class instances that provides access to program functions
-CREDENTIALS_MANAGER = None
+CONFIG_MANAGER = None
+EXTRACT_AND_UPLOAD_CLIPPINGS = None
 
 
-def create_gui(credential_manager: object):
+def create_gui(config_manager: object, extract_and_upload_clippings: object) -> object:
+    """
+    Presents the GUI to the user after binding all the main functions
+
+    Args:
+        config_manager (object)
+        extract_and_upload_clippings (object)
+
+    Returns:
+        object: final pyqt gui interface
+    """
     # globalising the main objects passed into the function
-    global CREDENTIALS_MANAGER
-    CREDENTIALS_MANAGER = credential_manager
+    global CONFIG_MANAGER, EXTRACT_AND_UPLOAD_CLIPPINGS
+    CONFIG_MANAGER = config_manager
+    EXTRACT_AND_UPLOAD_CLIPPINGS = extract_and_upload_clippings
 
     # binding the qt-generated UI
     main_window = QtWidgets.QMainWindow()
@@ -37,6 +48,8 @@ def create_gui(credential_manager: object):
     # sets up UI elements
     _setup_menubar()
     _enable_browse_path()
+    MAIN_GUI.credentialsBtn.clicked.connect(_configure_credentials_editor)
+    MAIN_GUI.syncBtn.clicked.connect(_execute_syncing)
 
     # hiding some stuff until sync is pressed
     MAIN_GUI.syncProgressBar.setHidden(True)
@@ -58,19 +71,26 @@ def _enable_browse_path():
         path = QtWidgets.QFileDialog.getOpenFileName(
             MAIN_GUI.centralwidget,
             "Open Your Kindle Clippings Text File",
+            directory=CONFIG_MANAGER.config["SELECTED_PATH"],
             filter="*.txt",
         )
 
-        if path:
+        if path[0]:
             MAIN_GUI.pathInput.setText(path[0])
+            CONFIG_MANAGER.save_path(path[0])
 
+    MAIN_GUI.pathInput.setText(CONFIG_MANAGER.config["SELECTED_PATH"])
     MAIN_GUI.browsePath.clicked.connect(_browse_path)
 
 
 def _execute_syncing():
     MAIN_GUI.syncBtn.setEnabled(False)
-    # execute the function thingy
-    pass
+    MAIN_GUI.syncBtn.setText("Syncing...")
+
+    EXTRACT_AND_UPLOAD_CLIPPINGS(CONFIG_MANAGER)
+
+    MAIN_GUI.syncBtn.setEnabled(True)
+    MAIN_GUI.syncBtn.setText("Sync!")
 
 
 def _setup_menubar():
@@ -89,15 +109,20 @@ def _set_up_credentials_editor_functions():
     notion_token_input = CREDENTIALS_GUI.notionAuthTokenInput
 
     # showing the current values
-    database_id_input.setText(CREDENTIALS_MANAGER.credentials["BOOK_DB_ID"])
-    notion_token_input.setText(CREDENTIALS_MANAGER.credentials["NOTION_TOKEN"])
+    database_id_input.setText(CONFIG_MANAGER.config["BOOK_DB_ID"])
+    notion_token_input.setText(CONFIG_MANAGER.config["NOTION_TOKEN"])
 
     # hiding some stuff
     CREDENTIALS_GUI.savedMessageLabel.setHidden(True)
 
     # enabling the saving button
     def _save_credentials():
-        CREDENTIALS_MANAGER.save_credentials(
+        # saving in progress depiction
+        CREDENTIALS_GUI.saveBtn.setText("Saving...")
+        CREDENTIALS_GUI.saveBtn.setEnabled(False)
+        CREDENTIALS_GUI.savedMessageLabel.setHidden(True)
+
+        CONFIG_MANAGER.save_credentials(
             book_id=database_id_input.text(),
             notion_token=notion_token_input.text(),
         )
@@ -105,6 +130,10 @@ def _set_up_credentials_editor_functions():
         # showing the success message
         CREDENTIALS_GUI.savedMessageLabel.setStyleSheet(SUCCESS_STYLE)
         CREDENTIALS_GUI.savedMessageLabel.setHidden(False)
+
+        # bringing the save button back to normal
+        CREDENTIALS_GUI.saveBtn.setText("Save")
+        CREDENTIALS_GUI.saveBtn.setEnabled(True)
 
     CREDENTIALS_GUI.saveBtn.clicked.connect(_save_credentials)
 
