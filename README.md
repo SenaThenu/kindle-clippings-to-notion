@@ -78,7 +78,7 @@ https://github.com/SenaThenu/kindle-clippings-to-notion/assets/98274844/2e8b0920
 
 As shown in the following picture, you can find the `Database_ID`!
 
-![Finding the Database ID](https://github.com/SenaThenu/kindle-clippings-to-notion/blob/main/readme-assets/database-id.png)
+![Finding the Database ID](https://github.com/SenaThenu/kindle-clippings-to-notion/blob/main/readme_assets/database-id.png)
 
 Once you have got these 2 keys, run the `main.py` program. 
 
