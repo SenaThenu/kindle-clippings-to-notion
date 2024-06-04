@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>590</width>
-    <height>305</height>
+    <height>400</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,7 +19,7 @@
   <property name="maximumSize">
    <size>
     <width>600</width>
-    <height>325</height>
+    <height>400</height>
    </size>
   </property>
   <property name="font">
@@ -74,6 +74,9 @@
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="spacing">
+        <number>9</number>
+       </property>
        <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
         <widget class="QLabel" name="label">
          <property name="maximumSize">
@@ -99,6 +102,9 @@
        </item>
        <item>
         <layout class="QVBoxLayout" name="mainForm">
+         <property name="topMargin">
+          <number>5</number>
+         </property>
          <item>
           <layout class="QHBoxLayout" name="credentials">
            <item>
@@ -114,7 +120,7 @@
             </widget>
            </item>
            <item>
-            <spacer name="horizontalSpacer">
+            <spacer name="credentialsSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -127,7 +133,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_2">
+            <widget class="QPushButton" name="credentialsBtn">
              <property name="font">
               <font>
                <pointsize>11</pointsize>
@@ -158,6 +164,9 @@
             <spacer name="pathSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Maximum</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -251,6 +260,21 @@
              </property>
              <property name="value">
               <number>42</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="syncStatusMessage">
+             <property name="font">
+              <font>
+               <pointsize>12</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Some Message</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
              </property>
             </widget>
            </item>
