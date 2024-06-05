@@ -8,6 +8,9 @@ from PyQt6 import QtWidgets, QtGui
 from ._main_ui import Ui_mainWindow
 from ._credentials_ui import Ui_Credentials
 
+# separate thread import for multi-threading
+from ._worker_thread import WorkerThread
+
 
 class MainWindow:
     def __init__(self):
@@ -28,6 +31,11 @@ class MainWindow:
         # default stylesheets
         self._error_style = "color: red;\nfont-weight: bold;"
         self._success_style = "color: green;\nfont-weight: bold;"
+
+        # setting up the worker thread
+        self.worker_thread = WorkerThread()
+        self.worker_thread.progress.connect(self._update_progress_bar)
+        self.worker_thread.status_message.connect(self._update_sync_status)
 
     def config(
         self, config_manager: object, extract_and_upload_clippings: object
@@ -86,13 +94,28 @@ class MainWindow:
         self.main_gui.browsePath.clicked.connect(_browse_path)
 
     def _execute_syncing(self):
+        # ui changes to respond to the user command
         self.main_gui.syncBtn.setEnabled(False)
         self.main_gui.syncBtn.setText("Syncing...")
+        self.main_gui.syncStatusMessage.setHidden(False)
+        self.main_gui.syncStatusMessage.setStyleSheet("")
+        self.main_gui.syncProgressBar.setHidden(False)
 
-        self.extract_and_upload_clippings(self.config_manager)
+        def _finish_syncing():
+            # ui changes to indicate completion!
+            self.main_gui.syncBtn.setEnabled(True)
+            self.main_gui.syncBtn.setText("Sync!")
+            self.main_gui.syncProgressBar.setHidden(False)
 
-        self.main_gui.syncBtn.setEnabled(True)
-        self.main_gui.syncBtn.setText("Sync!")
+            # displaying a success message
+            self.main_gui.syncStatusMessage.setStyleSheet(self._success_style)
+            self.main_gui.syncStatusMessage.setText("Synced Successfully! 👍")
+
+        self.worker_thread.run(
+            self.extract_and_upload_clippings,
+            {"config_manager": self.config_manager},
+            _finish_syncing,
+        )
 
     def _setup_menubar(self):
         """
@@ -155,3 +178,9 @@ class MainWindow:
         # displaying the UI
         credentials_dialog.exec()
         credentials_dialog.show()
+
+    def _update_progress_bar(self, value):
+        self.main_gui.syncProgressBar.setValue(value)
+
+    def _update_sync_status(self, message):
+        self.main_gui.syncStatusMessage.setText(message)
