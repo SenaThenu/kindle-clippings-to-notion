@@ -113,7 +113,3 @@ def extractor(path_to_clippings_txt: str) -> dict:
     books = _extract_clippings_from_raw(raw_clippings_lines)
 
     return books
-
-
-with open("Sample.json", "w") as f:
-    json.dump(extractor("My Clippings.txt"), f)
