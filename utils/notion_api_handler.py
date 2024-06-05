@@ -152,8 +152,21 @@ class NotionApiHandler:
         }
 
         block_data = json.dumps(raw_data)
-        response = requests.request(
-            "PATCH", request_url, headers=self.headers, data=block_data
+        requests.request("PATCH", request_url, headers=self.headers, data=block_data)
+
+    def _update_highlight_count(self, book_id, n_highlights):
+        # updating the Highlights property of the page to represent the number of highlights in the page
+        _to_update_props = {"properties": {"Highlights": {"number": n_highlights}}}
+        _to_update_props = json.dumps(_to_update_props)
+
+        _page_props_update_request_url = f"https://api.notion.com/v1/pages/{book_id}"
+
+        # sending the request (no need to handle errors here)
+        requests.request(
+            "PATCH",
+            _page_props_update_request_url,
+            headers=self.headers,
+            data=_to_update_props,
         )
 
     def upload_clippings(self, clippings_dict: dict):
@@ -165,7 +178,12 @@ class NotionApiHandler:
 
             current_book_page_info = self._existing_book_pages_info[book_name]
             book_id = current_book_page_info["id"]
-            n_current_highlights = current_book_page_info["n_highlights"]
+
+            try:
+                n_current_highlights = int(current_book_page_info["n_highlights"])
+            except:
+                # in case the n_highlights column doesn't exist
+                n_current_highlights = None
 
             for i, clipping in enumerate(clippings_list):
                 # highlight
@@ -173,7 +191,6 @@ class NotionApiHandler:
 
                 if clipping["note"] != "":
                     # if a note exists
-                    print(clipping["note"])
                     self._add_a_block_to_page(clipping["note"], book_id, is_note=True)
 
                 # location and the added date
@@ -189,24 +206,7 @@ class NotionApiHandler:
                 if i < len(clippings_list) - 1:
                     self._add_a_block_to_page("", book_id)
 
-            # updating the Highlights property of the page to represent the number of highlights in the page
-            _to_update_props = {
-                "properties": {
-                    "Highlights": {
-                        "number": int(n_current_highlights) + len(clippings_list)
-                    }
-                }
-            }
-            _to_update_props = json.dumps(_to_update_props)
-
-            _page_props_update_request_url = (
-                f"https://api.notion.com/v1/pages/{book_id}"
-            )
-
-            # sending the request (no need to handle errors here)
-            requests.request(
-                "PATCH",
-                _page_props_update_request_url,
-                headers=self.headers,
-                data=_to_update_props,
-            )
+                # updating the number of highlights
+                if n_current_highlights != None:
+                    n_current_highlights += 1
+                    self._update_highlight_count(book_id, n_current_highlights)
