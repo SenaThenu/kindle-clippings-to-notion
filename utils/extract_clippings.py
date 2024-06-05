@@ -61,6 +61,9 @@ def _extract_clippings_from_raw(raw_clippings_lines: list) -> dict:
                 # adding empty strings for highlights and notes (as placeholders)
                 # this even allows us to allow multi-line highlights to be synced
                 books[_current_book][-1][_clipping_type] = ""
+                books[_current_book][-1][
+                    "note"
+                ] = ""  # to make sure there's always a note property!
             elif _info_type_in_next_line == "clipping metadata":
                 _split_raw_line = raw_line.split(" ")
                 _current_clipping_data = books[_current_book][-1]
