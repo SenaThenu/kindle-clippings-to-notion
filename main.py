@@ -1,7 +1,7 @@
 import sys
 from PyQt6.QtWidgets import QApplication
 
-import gui
+from gui import MainWindow
 from config import ConfigManager
 from utils import extract_and_upload_clippings
 
@@ -12,7 +12,8 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     # binding the ui
-    main_gui = gui.create_gui(config_manager, extract_and_upload_clippings)
+    main_window = MainWindow()
+    main_gui = main_window.config(config_manager, extract_and_upload_clippings)
 
     # showing it to the users
     main_gui.show()
