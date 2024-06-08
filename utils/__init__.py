@@ -35,7 +35,7 @@ def extract_and_upload_clippings(
             # uploading them to notion
             progress_increment_for_each_upload = math.floor(80 / n_total_clippings)
 
-            update_status_message_signal.emit("Uploading to Notion")
+            update_status_message_signal.emit("Getting Ready to Upload to Notion")
             notion_uploader = NotionApiHandler(
                 config_manager,
                 update_progress_signal,

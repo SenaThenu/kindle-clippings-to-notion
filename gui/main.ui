@@ -59,6 +59,21 @@
     <enum>Qt::LeftToRight</enum>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
      <widget class="QFrame" name="mainFrame">
       <property name="sizePolicy">
@@ -76,6 +91,18 @@
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <property name="spacing">
         <number>9</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
        </property>
        <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
         <widget class="QLabel" name="label">
@@ -177,7 +204,20 @@
             </spacer>
            </item>
            <item>
-            <widget class="QLineEdit" name="pathInput"/>
+            <widget class="QLineEdit" name="pathInput">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>420</width>
+               <height>0</height>
+              </size>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QToolButton" name="browsePath">
@@ -254,7 +294,7 @@
              </property>
              <property name="minimumSize">
               <size>
-               <width>350</width>
+               <width>450</width>
                <height>0</height>
               </size>
              </property>
