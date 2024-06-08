@@ -2,155 +2,223 @@
 Connects the GUI and the Utils
 """
 
+import time
 from os import path
 
 from PyQt6 import QtWidgets, QtGui
 from ._main_ui import Ui_mainWindow
 from ._credentials_ui import Ui_Credentials
 
-# importing and initialising the ui classes
-MAIN_GUI = Ui_mainWindow()
-CREDENTIALS_GUI = Ui_Credentials()
-
-LOGO_PATH = path.abspath(
-    path.join(path.dirname(path.dirname(__file__)), "readme_assets/app_logo.png")
-)
-
-# some default styling
-ERROR_STYLE = "color: red;\nfont-weight: bold;"
-SUCCESS_STYLE = "color: green;\nfont-weight: bold;"
-
-# class instances that provides access to program functions
-CONFIG_MANAGER = None
-EXTRACT_AND_UPLOAD_CLIPPINGS = None
+# separate thread import for multi-threading
+from ._worker_thread import WorkerThread
 
 
-def create_gui(config_manager: object, extract_and_upload_clippings: object) -> object:
-    """
-    Presents the GUI to the user after binding all the main functions
-
-    Args:
-        config_manager (object)
-        extract_and_upload_clippings (object)
-
-    Returns:
-        object: final pyqt gui interface
-    """
-    # globalising the main objects passed into the function
-    global CONFIG_MANAGER, EXTRACT_AND_UPLOAD_CLIPPINGS
-    CONFIG_MANAGER = config_manager
-    EXTRACT_AND_UPLOAD_CLIPPINGS = extract_and_upload_clippings
-
-    # binding the qt-generated UI
-    main_window = QtWidgets.QMainWindow()
-    MAIN_GUI.setupUi(main_window)
-
-    # sets up UI elements
-    _setup_menubar()
-    _enable_browse_path()
-    MAIN_GUI.credentialsBtn.clicked.connect(_configure_credentials_editor)
-    MAIN_GUI.syncBtn.clicked.connect(_execute_syncing)
-
-    # hiding some stuff until sync is pressed
-    MAIN_GUI.syncProgressBar.setHidden(True)
-    MAIN_GUI.syncStatusMessage.setHidden(True)
-
-    # basic main window configurations
-    main_window.setWindowIcon(QtGui.QIcon(LOGO_PATH))
-
-    return main_window
-
-
-def _enable_browse_path():
-    """
-    Allows the user ot select the path they need
-    """
-
-    def _browse_path():
-        # options = QtWidgets.QFileDialog.DontUseNativeDialog
-        path = QtWidgets.QFileDialog.getOpenFileName(
-            MAIN_GUI.centralwidget,
-            "Open Your Kindle Clippings Text File",
-            directory=CONFIG_MANAGER.config["SELECTED_PATH"],
-            filter="*.txt",
+class MainWindow:
+    def __init__(self):
+        """
+        IMPORTANT: To create the MainWindow call the config() method after initialising this class!
+        """
+        # window specifications
+        self._logo_path = path.abspath(
+            path.join(
+                path.dirname(path.dirname(__file__)), "readme_assets/app_logo.png"
+            )
         )
 
-        if path[0]:
-            MAIN_GUI.pathInput.setText(path[0])
-            CONFIG_MANAGER.save_path(path[0])
+        # importing pre-built interfaces
+        self.main_gui = Ui_mainWindow()
+        self.credentials_gui = Ui_Credentials()
 
-    MAIN_GUI.pathInput.setText(CONFIG_MANAGER.config["SELECTED_PATH"])
-    MAIN_GUI.browsePath.clicked.connect(_browse_path)
+        # default stylesheets
+        self._error_style = "color: red;\nfont-weight: bold;"
+        self._success_style = "color: green;\nfont-weight: bold;"
 
+    def config(
+        self, config_manager: object, extract_and_upload_clippings: object
+    ) -> object:
+        """
+        Returns the GUI after binding all the functions to it!
 
-def _execute_syncing():
-    MAIN_GUI.syncBtn.setEnabled(False)
-    MAIN_GUI.syncBtn.setText("Syncing...")
+        Args:
+            config_manager (object)
+            extract_and_upload_clippings (object): callback used to extract and upload clippings
 
-    EXTRACT_AND_UPLOAD_CLIPPINGS(CONFIG_MANAGER)
+        Returns:
+            object: the functional gui object
+        """
+        self.config_manager = config_manager
+        self.extract_and_upload_clippings = extract_and_upload_clippings
 
-    MAIN_GUI.syncBtn.setEnabled(True)
-    MAIN_GUI.syncBtn.setText("Sync!")
+        # binding the qt-generated UI
+        main_window = QtWidgets.QMainWindow()
+        self.main_gui.setupUi(main_window)
 
+        # sets up UI elements
+        self._setup_menubar()
+        self._enable_browse_path()
+        self.main_gui.credentialsBtn.clicked.connect(self._configure_credentials_editor)
+        self.main_gui.syncBtn.clicked.connect(self._execute_syncing)
 
-def _setup_menubar():
-    """
-    Makes the menu bar of the main window functional
-    """
-    MAIN_GUI.actionCredentials.triggered.connect(_configure_credentials_editor)
+        # hiding some stuff until sync is pressed
+        self.main_gui.syncProgressBar.setHidden(True)
+        self.main_gui.syncStatusMessage.setHidden(True)
 
+        # basic main window configurations
+        main_window.setWindowIcon(QtGui.QIcon(self._logo_path))
 
-def _set_up_credentials_editor_functions():
-    """
-    Makes the UI elements in the credentials editor functional
-    """
-    # storing references to the 2 input objects
-    database_id_input = CREDENTIALS_GUI.databaseIdInput
-    notion_token_input = CREDENTIALS_GUI.notionAuthTokenInput
+        return main_window
 
-    # showing the current values
-    database_id_input.setText(CONFIG_MANAGER.config["BOOK_DB_ID"])
-    notion_token_input.setText(CONFIG_MANAGER.config["NOTION_TOKEN"])
+    def _enable_browse_path(self):
+        """
+        Allows the user ot select the path they need
+        """
 
-    # hiding some stuff
-    CREDENTIALS_GUI.savedMessageLabel.setHidden(True)
+        def _browse_path():
+            # options = QtWidgets.QFileDialog.DontUseNativeDialog
+            path = QtWidgets.QFileDialog.getOpenFileName(
+                self.main_gui.centralwidget,
+                "Open Your Kindle Clippings Text File",
+                directory=self.config_manager.config["SELECTED_PATH"],
+                filter="*.txt",
+            )
 
-    # enabling the saving button
-    def _save_credentials():
-        # saving in progress depiction
-        CREDENTIALS_GUI.saveBtn.setText("Saving...")
-        CREDENTIALS_GUI.saveBtn.setEnabled(False)
-        CREDENTIALS_GUI.savedMessageLabel.setHidden(True)
+            if path[0]:
+                self.main_gui.pathInput.setText(path[0])
+                self.config_manager.save_path(path[0])
 
-        CONFIG_MANAGER.save_credentials(
-            book_id=database_id_input.text(),
-            notion_token=notion_token_input.text(),
+        self.main_gui.pathInput.setText(self.config_manager.config["SELECTED_PATH"])
+        self.main_gui.browsePath.clicked.connect(_browse_path)
+
+    def _finished_syncing_changes(self, message_type: str):
+        """
+        Updates the GUI to indicate completion!
+
+        Args:
+            message_type (str): either success or error
+        """
+        if message_type == "success":
+            _btn_text = "Sync!"
+        else:
+            _btn_text = "Try Again!"
+
+        self.main_gui.syncBtn.setEnabled(True)
+        self.main_gui.syncBtn.setText(_btn_text)
+        self.main_gui.syncProgressBar.setHidden(True)
+
+    def _display_success_message(self):
+        """
+        Displays "Synced Successfully!"
+        """
+        self.main_gui.syncStatusMessage.setStyleSheet(self._success_style)
+
+        # a quick pause to make sure this happens after all the update GUI signals executed
+        time.sleep(1)
+        self.main_gui.syncStatusMessage.setText("Synced Successfully! 👍")
+
+        self._finished_syncing_changes("success")
+
+    def _display_error_message(self, message: str):
+        """
+        Displays the given error message
+
+        Args:
+            message (str)
+        """
+        self.main_gui.syncStatusMessage.setStyleSheet(self._error_style)
+
+        # a quick pause to make sure this happens after all the update GUI signals executed
+        time.sleep(1)
+        self.main_gui.syncStatusMessage.setText(message)
+
+        self._finished_syncing_changes("error")
+
+    def _execute_syncing(self):
+        # ui changes to respond to the user command
+        self.main_gui.syncBtn.setEnabled(False)
+        self.main_gui.syncBtn.setText("Syncing...")
+        self.main_gui.syncStatusMessage.setHidden(False)
+        self.main_gui.syncStatusMessage.setStyleSheet("")
+        self.main_gui.syncProgressBar.setHidden(False)
+
+        # setting up the worker thread and executing the action in a separate
+        self.worker_thread = WorkerThread(
+            self.extract_and_upload_clippings,
+            {
+                "config_manager": self.config_manager,
+                "display_error_message": self._display_error_message,
+            },
+            self._display_success_message,
         )
 
-        # showing the success message
-        CREDENTIALS_GUI.savedMessageLabel.setStyleSheet(SUCCESS_STYLE)
-        CREDENTIALS_GUI.savedMessageLabel.setHidden(False)
+        self.worker_thread.progress.connect(self._update_progress_bar)
+        self.worker_thread.status_message.connect(self._update_sync_status)
 
-        # bringing the save button back to normal
-        CREDENTIALS_GUI.saveBtn.setText("Save")
-        CREDENTIALS_GUI.saveBtn.setEnabled(True)
+        self.worker_thread.start()
 
-    CREDENTIALS_GUI.saveBtn.clicked.connect(_save_credentials)
+    def _setup_menubar(self):
+        """
+        Makes the menu bar of the main window functional
+        """
+        self.main_gui.actionCredentials.triggered.connect(
+            self._configure_credentials_editor
+        )
 
+    def _set_up_credentials_editor_functions(self):
+        """
+        Makes the UI elements in the credentials editor functional
+        """
+        # storing references to the 2 input objects
+        database_id_input = self.credentials_gui.databaseIdInput
+        notion_token_input = self.credentials_gui.notionAuthTokenInput
 
-def _configure_credentials_editor():
-    """
-    Creates the interface for the users to edit their credentials
-    """
-    # binding the qt-generated UI
-    credentials_dialog = QtWidgets.QDialog()
-    CREDENTIALS_GUI.setupUi(credentials_dialog)
+        # showing the current values
+        database_id_input.setText(self.config_manager.config["BOOK_DB_ID"])
+        notion_token_input.setText(self.config_manager.config["NOTION_TOKEN"])
 
-    # configuring the UI
-    credentials_dialog.setWindowTitle("Hashtags Editor")
-    credentials_dialog.setWindowIcon(QtGui.QIcon(LOGO_PATH))
-    _set_up_credentials_editor_functions()
+        # hiding some stuff
+        self.credentials_gui.savedMessageLabel.setHidden(True)
 
-    # displaying the UI
-    credentials_dialog.exec()
-    credentials_dialog.show()
+        # enabling the saving button
+        def _save_credentials():
+            # saving in progress depiction
+            self.credentials_gui.saveBtn.setText("Saving...")
+            self.credentials_gui.saveBtn.setEnabled(False)
+            self.credentials_gui.savedMessageLabel.setHidden(True)
+
+            self.config_manager.save_credentials(
+                book_id=database_id_input.text(),
+                notion_token=notion_token_input.text(),
+            )
+
+            # showing the success message
+            self.credentials_gui.savedMessageLabel.setStyleSheet(self._success_style)
+            self.credentials_gui.savedMessageLabel.setHidden(False)
+
+            # bringing the save button back to normal
+            self.credentials_gui.saveBtn.setText("Save")
+            self.credentials_gui.saveBtn.setEnabled(True)
+
+        self.credentials_gui.saveBtn.clicked.connect(_save_credentials)
+
+    def _configure_credentials_editor(self):
+        """
+        Creates the interface for the users to edit their credentials
+        """
+        # binding the qt-generated UI
+        credentials_dialog = QtWidgets.QDialog()
+        self.credentials_gui.setupUi(credentials_dialog)
+
+        # configuring the UI
+        credentials_dialog.setWindowTitle("Hashtags Editor")
+        credentials_dialog.setWindowIcon(QtGui.QIcon(self._logo_path))
+        self._set_up_credentials_editor_functions()
+
+        # displaying the UI
+        credentials_dialog.exec()
+        credentials_dialog.show()
+
+    def _update_progress_bar(self, value):
+        self.main_gui.syncProgressBar.setValue(value)
+
+    def _update_sync_status(self, message):
+        self.main_gui.syncStatusMessage.setText(message)
