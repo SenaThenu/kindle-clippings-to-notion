@@ -13,8 +13,8 @@ class ConfigManager:
             "NOTION_TOKEN": "",
             "SELECTED_PATH": "",
         }
-        self._config_file_path = (
-            "config/config.yaml"  # this must be in the perspective of the main.py
+        self._config_file_path = path.abspath(
+            path.join(path.dirname(__file__), "config.yaml")
         )
         self._read_config()
 
