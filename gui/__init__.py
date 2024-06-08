@@ -2,6 +2,7 @@
 Connects the GUI and the Utils
 """
 
+import time
 from os import path
 
 from PyQt6 import QtWidgets, QtGui
@@ -31,11 +32,6 @@ class MainWindow:
         # default stylesheets
         self._error_style = "color: red;\nfont-weight: bold;"
         self._success_style = "color: green;\nfont-weight: bold;"
-
-        # setting up the worker thread
-        self.worker_thread = WorkerThread()
-        self.worker_thread.progress.connect(self._update_progress_bar)
-        self.worker_thread.status_message.connect(self._update_sync_status)
 
     def config(
         self, config_manager: object, extract_and_upload_clippings: object
@@ -93,6 +89,49 @@ class MainWindow:
         self.main_gui.pathInput.setText(self.config_manager.config["SELECTED_PATH"])
         self.main_gui.browsePath.clicked.connect(_browse_path)
 
+    def _finished_syncing_changes(self, message_type: str):
+        """
+        Updates the GUI to indicate completion!
+
+        Args:
+            message_type (str): either success or error
+        """
+        if message_type == "success":
+            _btn_text = "Sync!"
+        else:
+            _btn_text = "Try Again!"
+
+        self.main_gui.syncBtn.setEnabled(True)
+        self.main_gui.syncBtn.setText(_btn_text)
+        self.main_gui.syncProgressBar.setHidden(True)
+
+    def _display_success_message(self):
+        """
+        Displays "Synced Successfully!"
+        """
+        self.main_gui.syncStatusMessage.setStyleSheet(self._success_style)
+
+        # a quick pause to make sure this happens after all the update GUI signals executed
+        time.sleep(1)
+        self.main_gui.syncStatusMessage.setText("Synced Successfully! 👍")
+
+        self._finished_syncing_changes("success")
+
+    def _display_error_message(self, message: str):
+        """
+        Displays the given error message
+
+        Args:
+            message (str)
+        """
+        self.main_gui.syncStatusMessage.setStyleSheet(self._error_style)
+
+        # a quick pause to make sure this happens after all the update GUI signals executed
+        time.sleep(1)
+        self.main_gui.syncStatusMessage.setText(message)
+
+        self._finished_syncing_changes("error")
+
     def _execute_syncing(self):
         # ui changes to respond to the user command
         self.main_gui.syncBtn.setEnabled(False)
@@ -101,21 +140,20 @@ class MainWindow:
         self.main_gui.syncStatusMessage.setStyleSheet("")
         self.main_gui.syncProgressBar.setHidden(False)
 
-        def _finish_syncing():
-            # ui changes to indicate completion!
-            self.main_gui.syncBtn.setEnabled(True)
-            self.main_gui.syncBtn.setText("Sync!")
-            self.main_gui.syncProgressBar.setHidden(False)
-
-            # displaying a success message
-            self.main_gui.syncStatusMessage.setStyleSheet(self._success_style)
-            self.main_gui.syncStatusMessage.setText("Synced Successfully! 👍")
-
-        self.worker_thread.run(
+        # setting up the worker thread and executing the action in a separate
+        self.worker_thread = WorkerThread(
             self.extract_and_upload_clippings,
-            {"config_manager": self.config_manager},
-            _finish_syncing,
+            {
+                "config_manager": self.config_manager,
+                "display_error_message": self._display_error_message,
+            },
+            self._display_success_message,
         )
+
+        self.worker_thread.progress.connect(self._update_progress_bar)
+        self.worker_thread.status_message.connect(self._update_sync_status)
+
+        self.worker_thread.start()
 
     def _setup_menubar(self):
         """

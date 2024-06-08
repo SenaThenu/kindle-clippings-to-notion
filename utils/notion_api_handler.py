@@ -3,12 +3,23 @@ import json
 
 
 class NotionApiHandler:
-    def __init__(self, config_manager: object):
+    def __init__(
+        self,
+        config_manager: object,
+        update_progress_signal: object,
+        update_status_message_signal: object,
+        initial_progress: int,
+        progress_increment_for_each_upload: int,
+    ):
         """
         Handles all the API calls to the Notion API and clippings uploading functionality
 
         Args:
             config_manager (object)
+            update_progress_signal (object)
+            update_status_message_signal (object)
+            initial_progress (int): the progress of the progress bar when this class is instantiated
+            progress_increment_for_each_upload (int)
         """
         # credentials + authorization handling
         self.book_db_id = config_manager.config["BOOK_DB_ID"]
@@ -18,6 +29,12 @@ class NotionApiHandler:
             "Content-Type": "application/json",
             "Notion-Version": "2022-06-28",
         }
+
+        # GUI signals
+        self.update_progress_signal = update_progress_signal
+        self.update_status_message_signal = update_status_message_signal
+        self.current_progress = initial_progress
+        self.progress_increment = progress_increment_for_each_upload
 
         # internal attributes to make the class functional
         self._existing_book_pages_info = self._get_existing_book_page_details()
@@ -38,6 +55,10 @@ class NotionApiHandler:
         response = requests.request("POST", request_url, headers=self.headers)
         response_dict = json.loads(response.text)
         existing_page_info_list = response_dict["results"]
+
+        if existing_page_info_list == {}:
+            # this means credentials are wrong
+            raise Exception("An error occurred!")
 
         # extracting the book name and its page id
         page_info = {}
@@ -171,6 +192,11 @@ class NotionApiHandler:
 
     def upload_clippings(self, clippings_dict: dict):
         for book_name, clippings_list in clippings_dict.items():
+            # updating the GUI
+            self.update_status_message_signal.emit(
+                f"Uploading Clippings from {book_name}"
+            )
+
             if book_name not in self._existing_book_pages_info.keys():
                 self._create_new_book_page(
                     book_name=book_name, author=clippings_list[0]["author"]
@@ -210,3 +236,7 @@ class NotionApiHandler:
                 if n_current_highlights != None:
                     n_current_highlights += 1
                     self._update_highlight_count(book_id, n_current_highlights)
+
+                # updating the progress bar in the GUI
+                self.current_progress += self.progress_increment
+                self.update_progress_signal.emit(self.current_progress)

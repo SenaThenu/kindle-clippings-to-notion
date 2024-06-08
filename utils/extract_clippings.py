@@ -20,6 +20,8 @@ def _extract_clippings_from_raw(raw_clippings_lines: list) -> dict:
     _current_book = ""
     _clipping_type = ""
 
+    n_total_clippings = 0
+
     for i, raw_line in enumerate(raw_clippings_lines):
         # removing the encodings
         raw_line = raw_line.strip()
@@ -47,23 +49,28 @@ def _extract_clippings_from_raw(raw_clippings_lines: list) -> dict:
 
                 _current_book = _book_title
                 _info_type_in_next_line = "clipping metadata"
+
                 # let's jump to the next line to find the clipping_type
-                _clipping_type = (
-                    raw_clippings_lines[i + 1].strip().split(" ")[2].lower()
-                )
+                try:
+                    _clipping_type = (
+                        raw_clippings_lines[i + 1].strip().split(" ")[2].lower()
+                    )
 
-                if _clipping_type == "note" and len(books[_current_book]) > 0:
-                    # this is because we wanna pair up a note and a highlight
-                    pass
-                else:
-                    books[_current_book].append({"author": _author})
+                    if _clipping_type == "note" and len(books[_current_book]) > 0:
+                        # this is because we wanna pair up a note and a highlight
+                        pass
+                    else:
+                        books[_current_book].append({"author": _author})
 
-                # adding empty strings for highlights and notes (as placeholders)
-                # this even allows us to allow multi-line highlights to be synced
-                books[_current_book][-1][_clipping_type] = ""
-                books[_current_book][-1][
-                    "note"
-                ] = ""  # to make sure there's always a note property!
+                    # adding empty strings for highlights and notes (as placeholders)
+                    # this even allows us to allow multi-line highlights to be synced
+                    books[_current_book][-1][_clipping_type] = ""
+                    books[_current_book][-1][
+                        "note"
+                    ] = ""  # to make sure there's always a note property!
+                except:
+                    # in case it didn't exist!
+                    break
             elif _info_type_in_next_line == "clipping metadata":
                 _split_raw_line = raw_line.split(" ")
                 _current_clipping_data = books[_current_book][-1]
@@ -93,10 +100,12 @@ def _extract_clippings_from_raw(raw_clippings_lines: list) -> dict:
                 else:
                     # adding a line break
                     books[_current_book][-1][_clipping_type] += f"\n{raw_line.strip()}"
+
+                n_total_clippings += 1
         else:
             continue
 
-    return books
+    return books, n_total_clippings
 
 
 def extractor(path_to_clippings_txt: str) -> dict:
@@ -113,6 +122,6 @@ def extractor(path_to_clippings_txt: str) -> dict:
     with open(path_to_clippings_txt, "r", encoding="utf8") as f:
         raw_clippings_lines = f.readlines()
 
-    books = _extract_clippings_from_raw(raw_clippings_lines)
+    books, n_total_clippings = _extract_clippings_from_raw(raw_clippings_lines)
 
-    return books
+    return books, n_total_clippings
