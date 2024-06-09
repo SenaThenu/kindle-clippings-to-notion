@@ -160,3 +160,13 @@ cython_debug/
 #.idea/
 
 test.py
+
+# unncessary asset files
+*.mp4
+*.ai
+
+# secret files
+config.yaml
+My Clippings.txt
+Clippings Test.txt
+My Clippings.json
