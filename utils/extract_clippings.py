@@ -122,6 +122,10 @@ def extractor(path_to_clippings_txt: str) -> dict:
     with open(path.abspath(path_to_clippings_txt), "r", encoding="utf8") as f:
         raw_clippings_lines = f.readlines()
 
+    # marking the beginning of the file!
+    if raw_clippings_lines[0].strip() != "==========":
+        raw_clippings_lines.insert(0, "==========")
+
     books, n_total_clippings = _extract_clippings_from_raw(raw_clippings_lines)
 
     return books, n_total_clippings
