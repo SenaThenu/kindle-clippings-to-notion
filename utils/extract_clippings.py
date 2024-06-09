@@ -119,7 +119,7 @@ def extractor(path_to_clippings_txt: str) -> dict:
         dict: a dict with the key being the book name and the values being a list of clippings (where each clipping is a dictionary!)
     """
     # Retrieving from my clippings
-    with open(path.abspath(path_to_clippings_txt), "r", encoding="utf8") as f:
+    with open(path.abspath(path_to_clippings_txt), "r", encoding="utf-8-sig") as f:
         raw_clippings_lines = f.readlines()
 
     # marking the beginning of the file!
