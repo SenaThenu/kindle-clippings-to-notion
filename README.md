@@ -4,7 +4,7 @@
 <div align="center">
   <!-- PROJECT LOGO -->
   <a href="https://github.com/SenaThenu/kindle-clippings-to-notion">
-    <img src="https://github.com/SenaThenu/kindle-clippings-to-notion/blob/main/readme_assets/logo.png" alt="Logo" height="250">
+    <img src="https://github.com/SenaThenu/kindle-clippings-to-notion/blob/main/readme_assets/logo.png" alt="Logo" height="150">
   </a>
 
   <!-- PROJECT TITLE -->
@@ -61,7 +61,7 @@
 
 ## Project Preview 📖
 
-Through an intuitive GUI, Kindle Clippings to Notion allows you to export all your kindle clippings from "My Clippings.txt" in your kindle to a fancy database in Notion!
+Through an intuitive GUI, **Kindle Clippings to Notion** allows you to export all your Kindle Clippings from "My Clippings.txt" in your Kindle to a fancy database in Notion!
 
 <p align="right"><a href="#readme-top">Jump to Top<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand gestures/Index Pointing Up.png" alt="Pointing Up" width="25" height="25" /></a></p>
 
@@ -89,11 +89,13 @@ Through an intuitive GUI, Kindle Clippings to Notion allows you to export all yo
 - `My Clippings.txt` from your Kindle. You can find this in the documents folder!
 - ID of the Notion database to which you wanna upload clippings
   - Recommended to use this database template: [Book Notes Template](https://senathenu.notion.site/8f98ce4fb0154407a98d48a8ea424fa6?v=25f74593774b463bba10de7a2d6968e8&pvs=4)
-  - ![Finding the Database ID](https://github.com/SenaThenu/kindle-clippings-to-notion/blob/main/readme_assets/database-id.png)
+    ![Finding the Database ID](https://github.com/SenaThenu/kindle-clippings-to-notion/blob/main/readme_assets/database-id.png)
 - API token of an integration you created in [Notion Integrations](https://www.notion.so/my-integrations)
   - Copy the `Internal Integration Secret`
+  - Add your integration to the database
   - If you feel stuck, watch this video!
-    - https://github.com/SenaThenu/kindle-clippings-to-notion/assets/98274844/2e8b0920-899e-4531-a24a-c77b5ec72384
+
+https://github.com/SenaThenu/kindle-clippings-to-notion/assets/98274844/2e8b0920-899e-4531-a24a-c77b5ec72384
 
 ### Windows 🪟
 Simple. Go to the Releases section of this repository and go to the latest release page. Under assets, download the `kindle_clippings_to_notion_for_windows.zip`. Then, extract it and run `kindle_clippings_to_notion.exe`!
